@@ -1,0 +1,17 @@
+{
+  "name": "orders-api",
+  "version": "0.2.0",
+  "description": "Orders API: prototype hardened for team development with Claude Code",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  }
+}

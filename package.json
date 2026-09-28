@@ -1,0 +1,29 @@
+{
+  "name": "claude-code-team-kit",
+  "version": "1.0.0",
+  "description": "Drop-in Claude Code setup for teams: guardrail hooks, a tests-must-pass Stop hook, reviewer/test/security subagents, ship/onboard/audit skills, a zero-dependency MCP server and a readiness audit.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\"",
+    "lint": "node scripts/lint.mjs",
+    "audit": "node .claude/tools/claude-ready.mjs .",
+    "demo": "node scripts/demo.mjs",
+    "install-kit": "node scripts/install.mjs"
+  },
+  "keywords": [
+    "claude-code",
+    "claude",
+    "anthropic",
+    "mcp",
+    "hooks",
+    "ai-agents",
+    "developer-tools"
+  ],
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.1"
+  }
+}

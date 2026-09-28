@@ -1,0 +1,13 @@
+{
+  "name": "orders-api",
+  "version": "0.1.0",
+  "description": "Prototype built in a weekend with an AI app builder",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,3 @@
+# Paths the readiness audit skips when scanning this repo.
+# The examples are deliberately insecure demo fixtures.
+examples

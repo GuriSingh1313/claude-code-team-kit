@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+.env
+.env.*
+!.env.example
+# The demo app ships a fake .env on purpose so the audit has something to catch.
+!examples/vibe-coded-app/.env
+.claude/settings.local.json
