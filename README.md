@@ -2,7 +2,7 @@
 
 **Make Claude Code safe and consistent for a whole engineering team: one command, no new dependencies.**
 
-[![ci](https://github.com/YOUR_GITHUB_USERNAME/claude-code-team-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/claude-code-team-kit/actions/workflows/ci.yml)
+[![ci](https://github.com/GuriSingh1313/claude-code-team-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/GuriSingh1313/claude-code-team-kit/actions/workflows/ci.yml)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![runtime deps](https://img.shields.io/badge/runtime%20dependencies-0-brightgreen)
 ![platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-informational)
@@ -48,7 +48,7 @@ Full reports: [`examples/reports/`](examples/reports/SUMMARY.md). Reproduce them
 Requires Node 18+ (the only requirement; your project can be in any language).
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/claude-code-team-kit
+git clone https://github.com/GuriSingh1313/claude-code-team-kit
 node claude-code-team-kit/scripts/install.mjs /path/to/your/repo
 ```
 
@@ -122,13 +122,13 @@ folders with a `.claudereadyignore` file (one path per line).
 
 ## Need this set up for your team?
 
-I'm [Your Name], a senior engineer with 14 years of experience. I set up Claude Code for teams and harden AI-built apps for production:
+I'm Gurveer Singh, a senior engineer with 14 years of experience. I set up Claude Code for teams and harden AI-built apps for production:
 
 - **Readiness audit**: the report above for your repo, plus a 30-minute walkthrough of what to fix first.
 - **Team setup**: this kit tailored to your stack, CI, and rules, a CLAUDE.md written from your codebase, plus a training session.
 - **AI-built app rescue**: security, tests and deployment for prototypes built with AI tools.
 
-Contact: [Upwork profile link] · [LinkedIn link] · [email]
+Contact: open an issue on this repo or reach me through [GitHub @GuriSingh1313](https://github.com/GuriSingh1313).
 
 ## License
 
