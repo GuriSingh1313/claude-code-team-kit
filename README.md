@@ -108,7 +108,7 @@ folders with a `.claudereadyignore` file (one path per line).
 
 ## Quality
 
-- 30 tests (`npm test`) covering every guard rule, the secret classifier, the audit checks, the installer's merge logic, the Stop hook's
+- 32 tests (`npm test`) covering every guard rule, the secret classifier, the audit checks, the installer's merge logic, the Stop hook's
   retry limit, and the MCP protocol, including an interop test with the official `@modelcontextprotocol/sdk` client.
 - The CI workflow runs lint and tests on macOS, Linux and Windows × Node 22 and 24, then gates on this repo scoring at least 90
   on its own audit.

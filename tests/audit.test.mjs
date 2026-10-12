@@ -93,6 +93,36 @@ test("secret scanner ignores placeholders and env lookups", () => {
   assert.equal(findSecretsInText(`client_secret = "${FAKE.genericSecret}"`)[0].kind, "Hardcoded credential");
 });
 
+test("finds secrets in .NET-style config files without false alarms", () => {
+  const appsettings = JSON.stringify({ Jwt: { Key: FAKE.genericSecret, Issuer: "TaskManagementAPI" } }, null, 2);
+  assert.deepEqual(findSecretsInText(appsettings).map((f) => f.kind), ["Config secret"]);
+  // A "Your...Key" default is still the real signing key at runtime, so it is reported.
+  const defaultKey = ["Your", "SuperSecretKey", "ThatIsLongEnough123"].join("");
+  assert.equal(findSecretsInText(`{ "Jwt": { "Key": "${defaultKey}" } }`)[0].kind, "Default secret in config");
+  // True template markers are not.
+  assert.equal(findSecretsInText('{ "Jwt": { "Key": "<set-in-user-secrets>" } }').length, 0);
+  assert.equal(findSecretsInText('{ "Jwt": { "Key": "${JWT_SIGNING_KEY}" } }').length, 0);
+  const conn = `"DefaultConnection": "Server=db;User Id=sa;Password=${FAKE.genericSecret.slice(0, 12)};"`;
+  assert.equal(findSecretsInText(conn)[0].kind, "Connection string password");
+  assert.equal(findSecretsInText('"DefaultConnection": "Server=(localdb)\\\\mssql;Database=Tasks;Trusted_Connection=True;"').length, 0);
+  assert.equal(findSecretsInText("// inline password value (Password=...)").length, 0);
+});
+
+test("detects .NET solutions kept in sub-folders", () => {
+  const withProject = makeProject({ "src/Api/Api.csproj": "<Project />", "src/Api/Program.cs": "class P {}" });
+  const sourceOnly = makeProject({ "TaskManagementAPI/src/Api/Program.cs": "class P {}" });
+  try {
+    const a = detectProject(withProject);
+    assert.ok(a.stacks.includes("dotnet"));
+    assert.equal(a.commands.test, "dotnet test");
+    const b = detectProject(sourceOnly);
+    assert.ok(b.stacks.includes("dotnet"));
+    assert.equal(b.commands.test, null, "no project file means no runnable test command");
+  } finally {
+    [withProject, sourceOnly].forEach(cleanup);
+  }
+});
+
 test("gitignore matcher handles globs, anchors and negation", () => {
   assert.ok(gitignorePatternToRegExp(".env").test("config/.env"));
   assert.ok(gitignorePatternToRegExp("/dist").test("dist/app.js"));

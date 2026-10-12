@@ -1,6 +1,6 @@
 # Claude Code Readiness Report: orders-api
 
-**Score: 9/100 (grade F)** · Stack: node · Scanned 2026-09-28
+**Score: 9/100 (grade F)** · Stack: node · Scanned 2026-10-12
 
 | Area | Score |
 |---|---|

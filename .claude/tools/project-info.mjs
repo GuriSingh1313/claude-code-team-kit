@@ -70,6 +70,26 @@ export function isTestFile(rel) {
   ) || /\.(test|spec)\.[cm]?[jt]sx?$/i.test(rel) || /(^|\/)test_[^/]+\.py$/.test(rel) || /_test\.(go|py)$/.test(rel) || /Tests?\.(java|kt|cs)$/.test(rel);
 }
 
+/** Return the first relative path matching `re` within `maxDepth` levels, skipping dependency/build folders. */
+export function findFile(dir, re, maxDepth) {
+  const queue = [["", 0]];
+  while (queue.length) {
+    const [rel, depth] = queue.shift();
+    let entries;
+    try {
+      entries = readdirSync(join(dir, rel), { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const e of entries) {
+      const childRel = rel ? `${rel}/${e.name}` : e.name;
+      if (e.isFile() && re.test(e.name)) return childRel;
+      if (e.isDirectory() && depth < maxDepth && !SKIP_DIRS.has(e.name) && !e.name.startsWith(".")) queue.push([childRel, depth + 1]);
+    }
+  }
+  return null;
+}
+
 function nodeRunner(dir) {
   if (existsSync(join(dir, "pnpm-lock.yaml"))) return "pnpm";
   if (existsSync(join(dir, "yarn.lock"))) return "yarn";
@@ -168,16 +188,15 @@ export function detectProject(dir) {
     if (existsSync(join(dir, "composer.lock"))) lockfile ||= "composer.lock";
   }
 
-  let csproj = false;
-  try {
-    csproj = readdirSync(dir).some((f) => /\.(sln|csproj)$/.test(f));
-  } catch {
-    // unreadable dir
-  }
-  if (csproj) {
+  // .NET solutions usually keep projects in src/<Name>/, so look a few levels down.
+  const dotnetProject = findFile(dir, /\.(sln|csproj|fsproj)$/i, 3);
+  const csharpSource = dotnetProject || findFile(dir, /\.cs$/i, 5);
+  if (csharpSource) {
     stacks.push("dotnet");
-    commands.test ||= "dotnet test";
-    commands.build ||= "dotnet build";
+    if (dotnetProject) {
+      commands.test ||= "dotnet test";
+      commands.build ||= "dotnet build";
+    }
   }
 
   const makefile = readText(join(dir, "Makefile"));

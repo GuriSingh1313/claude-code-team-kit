@@ -30,7 +30,14 @@ const SECRET_PATTERNS = [
     "Hardcoded credential",
     /(api[_-]?key|api[_-]?secret|secret[_-]?key|client[_-]?secret|auth[_-]?token|access[_-]?token|db[_-]?pass(word)?|password|passwd)["']?\s*[:=]\s*["'`]([^"'`\s]{12,})["'`]/i,
   ],
+  // JSON config such as appsettings.json: "Key": "...", "SigningKey": "...", "ClientSecret": "..."
+  ["Config secret", /"([A-Za-z0-9_]*(?:key|secret|password|passwd|token))"\s*:\s*"([^"\s]{16,})"/i],
+  // Connection strings with an inline password value
+  ["Connection string password", /\b(?:password|pwd)\s*=\s*(?=[^;"'\s]*[A-Za-z0-9])([^;"'\s]{4,})/i],
 ];
+
+// Kinds whose last capture group is the secret value (checked against placeholders).
+const VALUE_GROUP_KINDS = new Set(["Hardcoded credential", "Config secret", "Connection string password"]);
 
 const PLACEHOLDER = /(x{4,}|your[_-]?|example|changeme|placeholder|<[^>]+>|\$\{|process\.env|os\.environ|getenv|dummy|redacted|\*{4,})/i;
 
@@ -116,8 +123,16 @@ export function findSecretsInText(text) {
     for (const [kind, re] of SECRET_PATTERNS) {
       const m = line.match(re);
       if (!m) continue;
-      const value = kind === "Hardcoded credential" ? m[m.length - 1] : m[0];
-      if (kind === "Hardcoded credential" && PLACEHOLDER.test(value)) continue;
+      const value = VALUE_GROUP_KINDS.has(kind) ? m[m.length - 1] : m[0];
+      if (VALUE_GROUP_KINDS.has(kind) && PLACEHOLDER.test(value)) {
+        // "YourSuperSecretKey..." in appsettings.json is still the key the app signs with;
+        // only true template markers (<...>, ${...}, xxxx) are safe to ignore.
+        if (kind === "Config secret" && !/<[^>]+>|\$\{|x{4,}|\*{4,}/i.test(value)) {
+          findings.push({ kind: "Default secret in config", line: idx + 1, preview: mask(value) });
+          break;
+        }
+        continue;
+      }
       findings.push({ kind, line: idx + 1, preview: mask(value) });
       break;
     }
