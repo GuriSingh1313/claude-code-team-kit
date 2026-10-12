@@ -120,15 +120,9 @@ folders with a `.claudereadyignore` file (one path per line).
   pattern it can see. Pair it with Claude Code's permission modes and sandboxing for hard guarantees.
 - The audit measures setup, not code quality. A 100 means an agent has what it needs to work safely, not that the code is bug-free.
 
-## Need this set up for your team?
+## Author
 
-I'm Gurveer Singh, a senior engineer with 14 years of experience. I set up Claude Code for teams and harden AI-built apps for production:
-
-- **Readiness audit**: the report above for your repo, plus a 30-minute walkthrough of what to fix first.
-- **Team setup**: this kit tailored to your stack, CI, and rules, a CLAUDE.md written from your codebase, plus a training session.
-- **AI-built app rescue**: security, tests and deployment for prototypes built with AI tools.
-
-Contact: open an issue on this repo or reach me through [GitHub @GuriSingh1313](https://github.com/GuriSingh1313).
+Gurveer Singh ([@GuriSingh1313](https://github.com/GuriSingh1313)). Issues and pull requests are welcome.
 
 ## License
 
