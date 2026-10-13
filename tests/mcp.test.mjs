@@ -69,6 +69,14 @@ test("MCP handshake, tool listing and tool calls", async () => {
     assert.equal(badMethod.error.code, -32601);
     const ping = await s.request("ping");
     assert.deepEqual(ping.result, {});
+
+    const inside = await s.request("tools/call", { name: "find_todos", arguments: { path: "src" } });
+    assert.match(inside.result.content[0].text, /a\.js:1: TODO handle retries/);
+    for (const path of ["..", "../..", "src/../..", process.platform === "win32" ? "C:\\Windows" : "/etc"]) {
+      const outside = await s.request("tools/call", { name: "project_commands", arguments: { path } });
+      assert.equal(outside.result.isError, true, path);
+      assert.match(outside.result.content[0].text, /must stay inside the project/);
+    }
   } finally {
     s.close();
     cleanup(dir);

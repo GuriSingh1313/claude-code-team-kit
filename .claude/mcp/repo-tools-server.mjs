@@ -6,7 +6,7 @@
 //   find_todos        - TODO/FIXME/HACK markers with file:line
 import { createInterface } from "node:readline";
 import { readFileSync, statSync } from "node:fs";
-import { resolve, join } from "node:path";
+import { resolve, join, relative, isAbsolute, sep } from "node:path";
 import { audit, renderMarkdown } from "../tools/claude-ready.mjs";
 import { detectProject, walkFiles } from "../tools/project-info.mjs";
 
@@ -44,8 +44,15 @@ const TOOLS = [
   },
 ];
 
+// Tools may only look inside the project: "../" or an absolute path elsewhere is refused.
 function resolveDir(path) {
-  return path ? resolve(BASE_DIR, path) : BASE_DIR;
+  if (!path) return BASE_DIR;
+  const dir = resolve(BASE_DIR, path);
+  const rel = relative(BASE_DIR, dir);
+  if (rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) {
+    throw new Error(`path must stay inside the project: ${path}`);
+  }
+  return dir;
 }
 
 export function findTodos(dir, limit = 50) {
